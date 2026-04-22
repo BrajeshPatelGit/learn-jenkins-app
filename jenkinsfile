@@ -2,6 +2,13 @@ pipeline {
     agent any
 
     stages {
+        /** We use the same node for both stages, so we can reuse the build artifacts.
+         * If we used a different node for the Test stage, we would have to copy the build artifacts to the new node.
+         */
+        /* * We use the same Docker image for both stages, so we can reuse the build artifacts.
+         * If we used a different Docker image for the Test stage, we would have to copy the build artifacts to the new image.
+         */
+         /*
         stage('Build') {
             agent {
                 docker {
@@ -20,6 +27,7 @@ pipeline {
                 '''
             }
         }
+        */
         stage('Test') {
             agent {
                 docker {
