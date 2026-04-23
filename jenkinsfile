@@ -38,7 +38,6 @@ pipeline {
             steps {
                 sh '''
                     npm install playwright
-                    npx playwright install chromium --with-deps
                     npm install serve
                     $PWD/node_modules/.bin/serve -s build &
                     sleep 10
