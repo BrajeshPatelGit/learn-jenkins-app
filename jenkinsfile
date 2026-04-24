@@ -37,10 +37,11 @@ pipeline {
             }
             steps {
                 sh '''
-                    npm install playwright
-                    npm install serve
-                    $PWD/node_modules/.bin/serve -s build &
+                    npm run build && serve -s build &
                     sleep 10
+                    npm install playwright
+                    $PWD/node_modules/.bin/serve -s build &
+                    sleep 3
                     npx playwright test
                 '''
             }
