@@ -2,13 +2,7 @@ pipeline {
     agent any
 
     stages {
-        /** We use the same node for both stages, so we can reuse the build artifacts.
-         * If we used a different node for the Test stage, we would have to copy the build artifacts to the new node.
-         */
-        /* * We use the same Docker image for both stages, so we can reuse the build artifacts.
-         * If we used a different Docker image for the Test stage, we would have to copy the build artifacts to the new image.
-         */
-         /*
+
         stage('Build') {
             agent {
                 docker {
@@ -27,29 +21,69 @@ pipeline {
                 '''
             }
         }
-        */
-        stage('E2E') {
+
+        stage('Tests') {
+            parallel {
+                stage('Unit tests') {
+                    agent {
+                        docker {
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
+
+                    steps {
+                        sh '''
+                            #test -f build/index.html
+                            npm test
+                        '''
+                    }
+                    post {
+                        always {
+                            junit 'jest-results/junit.xml'
+                        }
+                    }
+                }
+
+                stage('E2E') {
+                    agent {
+                        docker {
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            reuseNode true
+                        }
+                    }
+
+                    steps {
+                        sh '''
+                            npm install serve
+                            node_modules/.bin/serve -s build &
+                            sleep 10
+                            npx playwright test  --reporter=html
+                        '''
+                    }
+
+                    post {
+                        always {
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
             agent {
                 docker {
-                    image 'mcr.microsoft.com/playwright:v1.58.2-noble'
+                    image 'node:18-alpine'
                     reuseNode true
                 }
             }
             steps {
                 sh '''
-                    npm run build && serve -s build &
-                    sleep 10
-                    npm install playwright
-                    $PWD/node_modules/.bin/serve -s build &
-                    sleep 3
-                    npx playwright test
+                    npm install netlify-cli
+                    node_modules/.bin/netlify --version
                 '''
             }
-        }
-    }
-    post {
-        always {
-            junit 'test-results/junit.xml'
         }
     }
 }
