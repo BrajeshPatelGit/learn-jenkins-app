@@ -1,5 +1,7 @@
-# No build needed - Jenkins handles building
-# This config is for serving the pre-built artifact from CI/CD
+[build]
+# Jenkins handles all building - Netlify only serves pre-built artifacts
+command = ""
+publish = "build"
 
 [[redirects]]
 from = "/*"
