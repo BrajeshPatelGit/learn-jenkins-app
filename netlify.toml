@@ -1,12 +1,6 @@
-[build]
-command = "npm run build:ci"
-publish = "build"
-functions = "functions"
-
-[build.environment]
-NODE_VERSION = "18"
-CI = "true"
-NPM_FLAGS = "--legacy-peer-deps"
+second change as per co-pilot to resolve the build error in netlify.
+# No build needed - Jenkins handles building
+# This config is for serving the pre-built artifact from CI/CD
 
 [[redirects]]
 from = "/*"
