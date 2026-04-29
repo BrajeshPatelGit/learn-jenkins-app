@@ -1,4 +1,3 @@
-second change as per co-pilot to resolve the build error in netlify.
 # No build needed - Jenkins handles building
 # This config is for serving the pre-built artifact from CI/CD
 
