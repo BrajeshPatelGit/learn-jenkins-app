@@ -103,7 +103,7 @@ pipeline {
             }
 
             environment {
-                BASE_URL = "https://wondrous-seahorse-055f9e.netlify.app"
+                CI_ENVIRONMENT_URL = "https://wondrous-seahorse-055f9e.netlify.app"
             }
 
             steps {
